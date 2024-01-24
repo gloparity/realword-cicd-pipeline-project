@@ -57,27 +57,27 @@ pipeline {
                 withCredentials([string(credentialsId: 'SonarQube-Token', variable: 'SONAR_TOKEN')]) {
                 sh """
                 mvn sonar:sonar \
-                -Dsonar.projectKey=java-web-app-project \
-                -Dsonar.host.url=http://10.182.0.17:9000 \
+                -Dsonar.projectKey=Java-WebApp \
+                -Dsonar.host.url=http://10.138.0.5:9000 \
                 -Dsonar.login=$SONAR_TOKEN
                 """
                 }
             }
         }
     }
-    // stage('SonarQube GateKeeper') {
-    //     steps {
-    //       timeout(time : 1, unit : 'HOURS'){
-    //       waitForQualityGate abortPipeline: true
-    //       }
-    //    }
-    // }
+    stage('SonarQube GateKeeper') {
+        steps {
+          timeout(time : 1, unit : 'HOURS'){
+          waitForQualityGate abortPipeline: true
+          }
+       }
+    }
     stage("Nexus Artifact Uploader"){
         steps{
            nexusArtifactUploader(
               nexusVersion: 'nexus3',
               protocol: 'http',
-              nexusUrl: '10.182.0.9:8081',
+              nexusUrl: '10.138.0.7:8081',
               groupId: 'webapp',
               version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
               repository: 'maven-project-releases',  //"${NEXUS_REPOSITORY}",
